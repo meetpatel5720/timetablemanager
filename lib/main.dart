@@ -57,24 +57,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     )
                   ]
-                : CupertinoActionSheet(
-                    actions: <Widget>[
-                      CupertinoActionSheetAction(
-                        child: Text("Create"),
-                        onPressed: () => openAddNewTimeTable(context),
+                : <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        CupertinoIcons.ellipsis,
+                        color: Colors.white,
                       ),
-                      CupertinoActionSheetAction(
-                        child: Text("Import"),
-                        onPressed: () => null,
-                      )
-                    ],
-                    cancelButton: CupertinoActionSheetAction(
-                      child: Text("Cancel"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      iconSize: 30,
+                      tooltip: 'New Record',
+                      onPressed: () {},
                     ),
-                  )),
+                  ]),
         body: _buildPage());
   }
 
@@ -200,5 +193,30 @@ class _MyHomePageState extends State<MyHomePage> {
     if (value == "Create") {
       openAddNewTimeTable(context);
     }
+  }
+
+  void cupertinoActionSheet(BuildContext context) {
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) {
+          return CupertinoActionSheet(
+            actions: <Widget>[
+              CupertinoActionSheetAction(
+                child: Text("Create"),
+                onPressed: () => openAddNewTimeTable(context),
+              ),
+              CupertinoActionSheetAction(
+                child: Text("Import"),
+                onPressed: () => null,
+              )
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          );
+        });
   }
 }
