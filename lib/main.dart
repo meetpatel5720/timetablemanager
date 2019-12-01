@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       iconSize: 30,
                       tooltip: 'New Record',
-                      onPressed: () {},
+                      onPressed: () => cupertinoActionSheet(context),
                     ),
                   ]),
         body: _buildPage());
