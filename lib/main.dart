@@ -6,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:timetablemanager/Widget/TimeTableCard.dart';
 import 'package:timetablemanager/Widget/no_time_table.dart';
+import 'package:timetablemanager/constant_data.dart';
+import 'package:timetablemanager/courses_page.dart';
+import 'package:timetablemanager/timetable_page.dart';
 
 import 'Widget/NewTimeTable.dart';
 
@@ -21,6 +25,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(),
+      routes: {
+        '/timetableview': (ctx) => TimeTablePage(),
+        '/viewCourses': (ctx) => CoursesPage(),
+      },
     );
   }
 }
@@ -95,7 +103,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _addNewTimeTable(String title) {
     File jsonFile = new File(baseDir.path + "/" + title + ".json");
     jsonFile.createSync();
-    var map = {"courses": [], "days": []};
+
+    var days = [];
+    for (String day in dayList) {
+      days.add({'day_name': day, 'lectures': []});
+    }
+    var map = {"courses": [], "days": days};
     jsonFile.writeAsStringSync(json.encode(map));
     setState(() {
       jsonFileList = getTimeTableList();
@@ -138,23 +151,23 @@ class _MyHomePageState extends State<MyHomePage> {
                               alignment: Alignment.center,
                               child: new Text('Loading...'));
                         default:
-                          return snapshot.data.isEmpty
-                              ? NoTimeTable(openAddNewTimeTable)
-                              : ListView.builder(
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (context, index) {
-                                    return Card(
-                                        elevation: 2,
-                                        child: Container(
-                                          padding: EdgeInsets.all(8),
-                                          child: Text(snapshot.data[index]
-                                              .toString()
-                                              .split("/")
-                                              .last
-                                              .split(".")
-                                              .first),
-                                        ));
-                                  });
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: snapshot.data.isEmpty
+                                ? NoTimeTable(openAddNewTimeTable)
+                                : GridView.builder(
+                                    itemCount: snapshot.data.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10),
+                                    itemBuilder: (context, index) {
+                                      return TimeTableCard(
+                                          snapshot.data[index].toString(),
+                                          snapshot.data[index]);
+                                    }),
+                          );
                       }
                     });
         }

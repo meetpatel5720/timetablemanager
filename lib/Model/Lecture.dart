@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class Lecture {
+  final String type;
   final String startTime;
   final String endTime;
   final String courseCode;
@@ -8,7 +9,8 @@ class Lecture {
   final String day;
 
   Lecture(
-      {this.startTime,
+      {this.type,
+      this.startTime,
       this.endTime,
       this.courseCode,
       this.courseTitle,
