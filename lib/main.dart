@@ -20,9 +20,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TimeTable',
+      title: 'Time Table',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+            color: Colors.white,
+            actionsIconTheme: IconThemeData(color: Colors.black),
+            iconTheme: IconThemeData(color: Colors.black),
+            textTheme: TextTheme(
+                title: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold))),
+        primaryColor: Colors.blue,
       ),
       home: MyHomePage(),
       routes: {
@@ -48,35 +57,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Calling build..................................................");
+    final mediaQuery = MediaQuery.of(context);
+    final appBar = AppBar(
+      centerTitle: true,
+      title: Text("TimeTable"),
+    );
     return Scaffold(
-        appBar: AppBar(
-            title: Text("TimeTable"),
-            actions: Platform.isAndroid
-                ? <Widget>[
-                    PopupMenuButton<String>(
-                      padding: EdgeInsets.all(0),
-                      onSelected: (value) => choiceAction(value, context),
-                      itemBuilder: (BuildContext context) {
-                        return choice.map((String choice) {
-                          return PopupMenuItem(
-                              value: choice, child: Text(choice));
-                        }).toList();
-                      },
-                    )
-                  ]
-                : <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        CupertinoIcons.ellipsis,
-                        color: Colors.white,
-                      ),
-                      iconSize: 30,
-                      tooltip: 'New Record',
-                      onPressed: () => cupertinoActionSheet(context),
-                    ),
-                  ]),
-        body: _buildPage());
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      body: _buildPage(mediaQuery, appBar),
+    );
   }
 
   void openAddNewTimeTable(BuildContext ctx) {
@@ -120,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return list.isNotEmpty ? list : [];
   }
 
-  Widget _buildPage() {
+  Widget _buildPage(var mediaQuery, AppBar appBar) {
     return FutureBuilder(
       future: checkPermission(),
       builder: (context, snapshot) {
@@ -151,27 +141,80 @@ class _MyHomePageState extends State<MyHomePage> {
                               alignment: Alignment.center,
                               child: new Text('Loading...'));
                         default:
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: snapshot.data.isEmpty
-                                ? NoTimeTable(openAddNewTimeTable)
-                                : GridView.builder(
-                                    itemCount: snapshot.data.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            crossAxisSpacing: 10,
-                                            mainAxisSpacing: 10),
-                                    itemBuilder: (context, index) {
-                                      return TimeTableCard(
-                                          snapshot.data[index].toString(),
-                                          snapshot.data[index]);
-                                    }),
+                          return Container(
+                            child: Column(
+                              children: <Widget>[
+                                snapshot.data.isEmpty
+                                    ? NoTimeTable(openAddNewTimeTable)
+                                    : Container(
+                                        height: mediaQuery.size.height -
+                                            appBar.preferredSize.height -
+                                            60 -
+                                            mediaQuery.viewInsets.bottom -
+                                            mediaQuery.padding.top,
+                                        child: GridView.builder(
+                                            padding: EdgeInsets.all(8),
+                                            itemCount: snapshot.data.length,
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 3,
+                                                    crossAxisSpacing: 10,
+                                                    mainAxisSpacing: 10),
+                                            itemBuilder: (context, index) {
+                                              return TimeTableCard(
+                                                  snapshot.data[index]
+                                                      .toString(),
+                                                  snapshot.data[index]);
+                                            }),
+                                      ),
+                                bottomBarBuilder(),
+                              ],
+                            ),
                           );
                       }
                     });
         }
       },
+    );
+  }
+
+  Widget bottomBarBuilder() {
+    return Container(
+      height: 60,
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 1,
+            color: Colors.blue,
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: IconButton(
+                  icon: Icon(
+                    Icons.add,
+                    size: 32,
+                  ),
+                  onPressed: () => openAddNewTimeTable(context),
+                ),
+              ),
+              Expanded(
+                child: IconButton(
+                  icon: Icon(
+                    Icons.import_export,
+                    size: 32,
+                  ),
+                  onPressed: () => null,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -200,36 +243,5 @@ class _MyHomePageState extends State<MyHomePage> {
       return true;
     } else
       return false;
-  }
-
-  void choiceAction(String value, BuildContext context) {
-    if (value == "Create") {
-      openAddNewTimeTable(context);
-    }
-  }
-
-  void cupertinoActionSheet(BuildContext context) {
-    showCupertinoModalPopup(
-        context: context,
-        builder: (context) {
-          return CupertinoActionSheet(
-            actions: <Widget>[
-              CupertinoActionSheetAction(
-                child: Text("Create"),
-                onPressed: () => openAddNewTimeTable(context),
-              ),
-              CupertinoActionSheetAction(
-                child: Text("Import"),
-                onPressed: () => null,
-              )
-            ],
-            cancelButton: CupertinoActionSheetAction(
-              child: Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          );
-        });
   }
 }

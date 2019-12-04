@@ -53,7 +53,16 @@ class _CoursesPageState extends State<CoursesPage> {
                             controller: _courseTitleInputController,
                           ),
                           RaisedButton(
-                            child: Text(isEdit ? "Edit" : "Add"),
+                            color: Colors.blue,
+                            elevation: 0,
+                            highlightElevation: 3,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Text(
+                              isEdit ? "Edit" : "Add",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                             onPressed: _addCourse,
                           )
                         ],

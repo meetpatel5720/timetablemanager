@@ -24,38 +24,20 @@ class _TimeTablePageState extends State<TimeTablePage> {
     final routeArgs =
         ModalRoute.of(context).settings.arguments as Map<String, String>;
     final String title = routeArgs['title'];
+
+    final mediaQuery = MediaQuery.of(context);
+    final appBar = AppBar(
+      centerTitle: true,
+      title: Text(title[0].toUpperCase() + title.substring(1)),
+    );
     path = routeArgs['path'];
 
     getTimeTable();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title.toUpperCase()),
-        actions: coursesList.length > 0
-            ? <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                  iconSize: 30,
-                  tooltip: 'New lecture',
-                  onPressed: () => _openAddNewLecture(context, false, -1, -1),
-                ),
-                FlatButton(
-                  child: Text(
-                    "Courses",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                  ),
-                  onPressed: () => _viewCourses(context),
-                ),
-              ]
-            : <Widget>[],
-      ),
-      body: _buildPage(),
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      body: _buildPage(mediaQuery, appBar),
     );
   }
 
@@ -66,7 +48,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
     timeTable = jsonFileContent['days'];
   }
 
-  Widget _buildPage() {
+  Widget _buildPage(var mediaQuery, AppBar appBar) {
     if (coursesList.length == 0) {
       return Center(
         child: Column(
@@ -74,8 +56,16 @@ class _TimeTablePageState extends State<TimeTablePage> {
           children: <Widget>[
             Text("First add some couses"),
             RaisedButton(
+              color: Colors.blue,
+              elevation: 0,
+              highlightElevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               onPressed: () => _viewCourses(context),
-              child: Text("Add"),
+              child: Text(
+                "Add",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             )
           ],
         ),
@@ -85,24 +75,93 @@ class _TimeTablePageState extends State<TimeTablePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Add lectures"),
-            RaisedButton(
-              onPressed: () => _openAddNewLecture(context, false, -1, -1),
-              child: Text("Add"),
-            )
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Add lectures"),
+                  RaisedButton(
+                    color: Colors.blue,
+                    elevation: 0,
+                    highlightElevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    onPressed: () => _openAddNewLecture(context, false, -1, -1),
+                    child: Text(
+                      "Add",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            bottomBarBuilder()
           ],
         ),
       );
     } else {
       getNonEmptyList();
-      return ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: nonEmptyDays.length,
-          itemBuilder: (context, index) {
-            return Day(context, nonEmptyDays[index], _openAddNewLecture);
-          });
+      return Column(
+        children: <Widget>[
+          Container(
+            height: mediaQuery.size.height -
+                appBar.preferredSize.height -
+                60 -
+                mediaQuery.padding.top,
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: nonEmptyDays.length,
+                itemBuilder: (context, index) {
+                  return Day(context, nonEmptyDays[index], _openAddNewLecture);
+                }),
+          ),
+          bottomBarBuilder()
+        ],
+      );
     }
+  }
+
+  Widget bottomBarBuilder() {
+    return Visibility(
+      visible: coursesList.length > 0,
+      child: Container(
+        height: 60,
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 1,
+              color: Colors.blue,
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.add,
+                      size: 32,
+                    ),
+                    onPressed: () => _openAddNewLecture(context, false, -1, -1),
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.list,
+                      size: 32,
+                    ),
+                    onPressed: () => _viewCourses(context),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _viewCourses(BuildContext ctx) {

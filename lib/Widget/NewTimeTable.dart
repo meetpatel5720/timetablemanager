@@ -31,12 +31,16 @@ class _NewTimeTableState extends State<NewTimeTable> {
             Container(
               margin: EdgeInsets.only(top: 8),
               child: RaisedButton(
+                elevation: 0,
+                highlightElevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
                 onPressed: _submitData,
                 child: Text(
                   "Add",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-                color: Theme.of(context).primaryColor,
+                color: Colors.blue,
               ),
             )
           ],

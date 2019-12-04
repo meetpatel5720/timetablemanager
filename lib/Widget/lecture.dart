@@ -12,8 +12,8 @@ class Lecture extends StatelessWidget {
     startTime = DateTime.parse("0000-00-00 " + lecture['start_time']);
     endTime = DateTime.parse("0000-00-00 " + lecture['end_time']);
     return Container(
-      width: 180,
-      margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
+      width: 175,
+      margin: EdgeInsets.only(left: 5, right: 5),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: Colors.blue,

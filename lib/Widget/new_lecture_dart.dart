@@ -249,7 +249,7 @@ class _AddNewLectureState extends State<AddNewLecture> {
                           Container(
                             height: 32,
                             margin: EdgeInsets.only(left: 16),
-                            width: 80,
+                            width: 50,
                             child: TextField(
                               controller: _batchInputController,
                             ),
@@ -280,44 +280,54 @@ class _AddNewLectureState extends State<AddNewLecture> {
                       margin: EdgeInsets.all(4),
                       child: Row(
                         children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(left: 8),
+                              child: Text(
+                                labList[index]['course_code'] +
+                                    " - " +
+                                    labList[index]['batch'],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white),
+                                softWrap: false,
+                                overflow: TextOverflow.fade,
+                              ),
+                            ),
+                          ),
                           Container(
-                            margin: EdgeInsets.only(left: 8),
-                            child: Text(
-                              labList[index]['course_code'] +
-                                  " - " +
-                                  labList[index]['batch'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.white),
+                            width: 40,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedCourse =
+                                      findCourse(labList[index]['course_code']);
+                                  _batchInputController.text =
+                                      labList[index]['batch'];
+                                  labEditIndex = index;
+                                  isLabEdit = true;
+                                });
+                              },
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: Colors.white,
+                          Container(
+                            width: 40,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  labList.removeAt(index);
+                                });
+                              },
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _selectedCourse =
-                                    findCourse(labList[index]['course_code']);
-                                _batchInputController.text =
-                                    labList[index]['batch'];
-                                labEditIndex = index;
-                                isLabEdit = true;
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                labList.removeAt(index);
-                              });
-                            },
                           ),
                         ],
                       ),
@@ -334,22 +344,30 @@ class _AddNewLectureState extends State<AddNewLecture> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
+                    elevation: 0,
+                    highlightElevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
                     onPressed: addLectureToFile,
                     child: Text(
                       widget.isEdit ? "Edit" : "Add",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
-                    color: Theme.of(context).primaryColor,
+                    color: Colors.blue,
                   ),
                   Visibility(
                     visible: widget.isEdit,
                     child: Container(
                       margin: EdgeInsets.only(left: 16),
                       child: RaisedButton(
+                        elevation: 0,
+                        highlightElevation: 3,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                         onPressed: deleteLecture,
                         child: Text(
                           "Delete",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         color: Colors.red,
                       ),
@@ -411,7 +429,14 @@ class _AddNewLectureState extends State<AddNewLecture> {
     for (Map item in coursesList) {
       items.add(DropdownMenuItem(
         value: item,
-        child: Text(item['course_code']),
+        child: Container(
+            width: 80,
+            child: Text(
+              item['course_code'],
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+              softWrap: false,
+            )),
       ));
     }
     return items;

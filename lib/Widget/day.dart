@@ -17,6 +17,7 @@ class _DayState extends State<Day> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
       child: Column(
         children: <Widget>[
           Align(
@@ -35,6 +36,7 @@ class _DayState extends State<Day> {
           ),
           Container(
             height: 140,
+            margin: EdgeInsets.only(bottom: 5),
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.snapshot['lectures'].length,
