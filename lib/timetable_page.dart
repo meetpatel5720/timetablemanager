@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:timetablemanager/Widget/new_lecture_dart.dart';
-import 'package:timetablemanager/constant_data.dart' as prefix0;
 
 import 'Widget/day.dart';
 import 'constant_data.dart';
@@ -200,6 +200,25 @@ class _TimeTablePageState extends State<TimeTablePage> {
                       onPressed: () => _viewCourses(context),
                     ),
                   ),
+                  Expanded(
+                    child: FlatButton(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.share,
+                            size: 32,
+                            color: dark,
+                          ),
+                          Text(
+                            "Share",
+                            style: TextStyle(fontSize: 12, color: dark),
+                          ),
+                        ],
+                      ),
+                      onPressed: () => shareTimeTable("Test"),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -262,5 +281,9 @@ class _TimeTablePageState extends State<TimeTablePage> {
         nonEmptyDays.add(item);
       }
     }
+  }
+
+  void shareTimeTable(String title) {
+    ShareExtend.share(path, title[0].toUpperCase() + title.substring(1));
   }
 }

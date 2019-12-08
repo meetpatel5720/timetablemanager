@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:json_schema/json_schema.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timetablemanager/Widget/TimeTableCard.dart';
@@ -57,6 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<String> choice = ["Create", "Import"];
 
+  String _importPath;
+  String _importFileName;
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -67,7 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: dark,
       appBar: appBar,
-      body: _buildPage(mediaQuery, appBar),
+      body: Builder(
+        builder: (ctx) => _buildPage(mediaQuery, appBar, ctx),
+      ),
     );
   }
 
@@ -92,30 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _addNewTimeTable(String title) {
-    File jsonFile = new File(baseDir.path + "/" + title + ".json");
-    jsonFile.createSync();
-
-    var days = [];
-    for (String day in dayList) {
-      days.add({'day_name': day, 'lectures': []});
-    }
-    var map = {"courses": [], "days": days};
-    jsonFile.writeAsStringSync(json.encode(map));
-    setState(() {
-      jsonFileList = getTimeTableList();
-    });
-  }
-
-  Future<List> getTimeTableList() async {
-    List list = baseDir.listSync();
-    return list.isNotEmpty ? list : [];
-  }
-
-  Widget _buildPage(var mediaQuery, AppBar appBar) {
+  Widget _buildPage(var mediaQuery, AppBar appBar, BuildContext context) {
     return FutureBuilder(
       future: checkPermission(),
-      builder: (context, snapshot) {
+      builder: (_, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Align(
@@ -148,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   : FutureBuilder(
                       future: getTimeTableList(),
-                      builder: (context, snapshot) {
+                      builder: (_, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.waiting:
                             return Align(
@@ -184,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               }),
                                         ),
                                       ),
-                                bottomBarBuilder(),
+                                bottomBarBuilder(context),
                               ],
                             );
                         }
@@ -195,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget bottomBarBuilder() {
+  Widget bottomBarBuilder(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: lightBackground,
@@ -248,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
-                    onPressed: () => null,
+                    onPressed: () => openFilePicker(context),
                   ),
                 ),
               ],
@@ -257,6 +244,36 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  void _addNewTimeTable(String title) {
+    File jsonFile = new File(baseDir.path + "/" + title + ".json");
+    jsonFile.createSync();
+
+    var days = [];
+    for (String day in dayList) {
+      days.add({'day_name': day, 'lectures': []});
+    }
+    var map = {"courses": [], "days": days};
+    jsonFile.writeAsStringSync(json.encode(map));
+    setState(() {
+      jsonFileList = getTimeTableList();
+    });
+  }
+
+  void _writeImportedTimeTable(String title, var data) {
+    File jsonFile = new File(baseDir.path + "/" + title + ".json");
+    jsonFile.createSync();
+
+    jsonFile.writeAsStringSync(json.encode(data));
+    setState(() {
+      jsonFileList = getTimeTableList();
+    });
+  }
+
+  Future<List> getTimeTableList() async {
+    List list = baseDir.listSync();
+    return list.isNotEmpty ? list : [];
   }
 
   void requestPermission() async {
@@ -284,5 +301,54 @@ class _MyHomePageState extends State<MyHomePage> {
       return true;
     } else
       return false;
+  }
+
+  void openFilePicker(BuildContext ctx) async {
+    try {
+      _importPath = await FilePicker.getFilePath(
+          type: FileType.ANY, fileExtension: "json");
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    }
+    if (!mounted) return;
+    _importFileName = _importPath != null ? _importPath.split('/').last : "";
+
+    if (_importFileName.split(".").last == "json") {
+      rootBundle.loadString('assets/time_table_schema.json').then((data) {
+        Schema.createSchema(jsonDecode(data)).then((schema) {
+          var jsonFileContent = getImportedTimeTable(_importPath);
+          var result = schema.validate(jsonFileContent);
+          if (result) {
+            _writeImportedTimeTable(
+                _importFileName.split(".").first, jsonFileContent);
+          } else {
+            showErrorSnackBar(ctx);
+          }
+        });
+      });
+    } else {
+      showErrorSnackBar(ctx);
+    }
+    print(_importFileName);
+  }
+
+  void showErrorSnackBar(BuildContext ctx) {
+    final scaffold = Scaffold.of(ctx);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: const Text('Invalid file'),
+        action: SnackBarAction(
+            label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
+  }
+
+  Map getImportedTimeTable(String importPath) {
+    File file = File(importPath);
+    try {
+      return jsonDecode(file.readAsStringSync());
+    } on FormatException catch (e) {
+      return {};
+    }
   }
 }
