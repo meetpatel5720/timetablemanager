@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timetablemanager/Widget/new_lecture_dart.dart';
+import 'package:timetablemanager/constant_data.dart' as prefix0;
 
 import 'Widget/day.dart';
+import 'constant_data.dart';
 
 class TimeTablePage extends StatefulWidget {
   @override
@@ -35,7 +37,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
     getTimeTable();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dark,
       appBar: appBar,
       body: _buildPage(mediaQuery, appBar),
     );
@@ -50,53 +52,62 @@ class _TimeTablePageState extends State<TimeTablePage> {
 
   Widget _buildPage(var mediaQuery, AppBar appBar) {
     if (coursesList.length == 0) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("First add some couses"),
-            RaisedButton(
-              color: Colors.blue,
-              elevation: 0,
-              highlightElevation: 3,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              onPressed: () => _viewCourses(context),
-              child: Text(
-                "Add",
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            )
-          ],
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          color: lightBackground,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("First add some couses"),
+              RaisedButton(
+                color: dark,
+                elevation: 0,
+                highlightElevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                child: Text("Add",
+                    style: TextStyle(color: lightText, fontSize: 16)),
+                onPressed: () => _viewCourses(context),
+              )
+            ],
+          ),
         ),
       );
     } else if (isTimeTableEmpty()) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Add lectures"),
-                  RaisedButton(
-                    color: Colors.blue,
-                    elevation: 0,
-                    highlightElevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    onPressed: () => _openAddNewLecture(context, false, -1, -1),
-                    child: Text(
-                      "Add",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          color: lightBackground,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Add lectures"),
+                    RaisedButton(
+                      color: dark,
+                      elevation: 0,
+                      highlightElevation: 3,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Text("Add",
+                          style: TextStyle(color: lightText, fontSize: 16)),
+                      onPressed: () =>
+                          _openAddNewLecture(context, false, -1, -1),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            bottomBarBuilder()
-          ],
+              bottomBarBuilder()
+            ],
+          ),
         ),
       );
     } else {
@@ -104,16 +115,27 @@ class _TimeTablePageState extends State<TimeTablePage> {
       return Column(
         children: <Widget>[
           Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              color: lightBackground,
+            ),
             height: mediaQuery.size.height -
                 appBar.preferredSize.height -
                 60 -
-                mediaQuery.padding.top,
-            child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: nonEmptyDays.length,
-                itemBuilder: (context, index) {
-                  return Day(context, nonEmptyDays[index], _openAddNewLecture);
-                }),
+                mediaQuery.padding.top -
+                mediaQuery.viewInsets.bottom,
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              child: ListView.builder(
+                  padding:
+                      EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
+                  scrollDirection: Axis.vertical,
+                  itemCount: nonEmptyDays.length,
+                  itemBuilder: (context, index) {
+                    return Day(
+                        context, nonEmptyDays[index], _openAddNewLecture);
+                  }),
+            ),
           ),
           bottomBarBuilder()
         ],
@@ -126,37 +148,60 @@ class _TimeTablePageState extends State<TimeTablePage> {
       visible: coursesList.length > 0,
       child: Container(
         height: 60,
+        decoration: BoxDecoration(color: lightBackground),
         child: Column(
           children: <Widget>[
-            Container(
-              height: 1,
-              color: Colors.blue,
-            ),
             SizedBox(
-              height: 5,
+              child: Container(
+                color: dark,
+              ),
+              height: 0.7,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 32,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: FlatButton(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.add,
+                            size: 32,
+                            color: dark,
+                          ),
+                          Text(
+                            "Lecture",
+                            style: TextStyle(fontSize: 12, color: dark),
+                          ),
+                        ],
+                      ),
+                      onPressed: () =>
+                          _openAddNewLecture(context, false, -1, -1),
                     ),
-                    onPressed: () => _openAddNewLecture(context, false, -1, -1),
                   ),
-                ),
-                Expanded(
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.list,
-                      size: 32,
+                  Expanded(
+                    child: FlatButton(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.list,
+                            size: 32,
+                            color: dark,
+                          ),
+                          Text(
+                            "Courses",
+                            style: TextStyle(fontSize: 12, color: dark),
+                          ),
+                        ],
+                      ),
+                      onPressed: () => _viewCourses(context),
                     ),
-                    onPressed: () => _viewCourses(context),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -170,12 +215,6 @@ class _TimeTablePageState extends State<TimeTablePage> {
     });
   }
 
-  void choiceAction(String value, BuildContext context) {
-    if (value == "Courses") {
-      _viewCourses(context);
-    }
-  }
-
   void _addLecture(var newData) {
     File file = File(path);
     file.writeAsStringSync(jsonEncode(newData));
@@ -187,14 +226,14 @@ class _TimeTablePageState extends State<TimeTablePage> {
   void _openAddNewLecture(
       BuildContext ctx, bool isEdit, int editLecIndex, int dayIndex) {
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(10),
-        topRight: Radius.circular(10),
-      )),
+      backgroundColor: Colors.transparent,
       context: ctx,
       builder: (_) {
         return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            color: lightBackground,
+          ),
           height: 600 + MediaQuery.of(context).viewInsets.bottom,
           child: GestureDetector(
             onTap: () {},

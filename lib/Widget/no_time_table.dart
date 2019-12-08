@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetablemanager/constant_data.dart';
 
 class NoTimeTable extends StatelessWidget {
   final Function _openAddNewTimeTable;
@@ -13,16 +14,14 @@ class NoTimeTable extends StatelessWidget {
         children: <Widget>[
           Text("No time table found..."),
           RaisedButton(
-            color: Colors.blue,
+            color: dark,
             elevation: 0,
             highlightElevation: 3,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Text("Create new",
+                style: TextStyle(color: lightText, fontSize: 16)),
             onPressed: () => _openAddNewTimeTable(context),
-            child: Text(
-              "Create New",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
           )
         ],
       ),

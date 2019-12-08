@@ -17,12 +17,14 @@ class TimeTableCard extends StatelessWidget {
         margin: EdgeInsets.all(8),
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: Colors.blue, borderRadius: BorderRadius.circular(12)),
+          color: lightBox,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Center(
           child: Text(
             title.split("/").last.split(".").first,
             style: TextStyle(
-              color: Colors.white,
+              color: dark,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

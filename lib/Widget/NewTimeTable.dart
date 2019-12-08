@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetablemanager/constant_data.dart';
 
 class NewTimeTable extends StatefulWidget {
   final Function addNewTimeTable;
@@ -15,34 +16,36 @@ class _NewTimeTableState extends State<NewTimeTable> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-          top: 10,
-          left: 10,
-          right: 10,
-          bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: _titleInputController,
-              onSubmitted: (_) => _submitData(),
-            ),
             Container(
-              margin: EdgeInsets.only(top: 8),
-              child: RaisedButton(
-                elevation: 0,
-                highlightElevation: 3,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                onPressed: _submitData,
-                child: Text(
-                  "Add",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                color: Colors.blue,
+              margin: EdgeInsets.all(8),
+              child: TextField(
+                cursorColor: dark,
+                cursorRadius: Radius.circular(4),
+                style: TextStyle(color: colorList[2]),
+                decoration: InputDecoration(
+                    labelText: 'Title',
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold)),
+                controller: _titleInputController,
+                onSubmitted: (_) => _submitData(),
               ),
-            )
+            ),
+            RaisedButton(
+              elevation: 0,
+              highlightElevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              onPressed: _submitData,
+              child: Text(
+                "Add",
+                style: TextStyle(color: lightBackground, fontSize: 16),
+              ),
+              color: dark,
+            ),
           ],
         ),
       ),

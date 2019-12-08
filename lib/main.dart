@@ -22,16 +22,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Time Table',
       theme: ThemeData(
+        splashColor: darkSplash,
         appBarTheme: AppBarTheme(
-            color: Colors.white,
+            elevation: 0,
+            color: dark,
             actionsIconTheme: IconThemeData(color: Colors.black),
-            iconTheme: IconThemeData(color: Colors.black),
+            iconTheme: IconThemeData(color: lightBackground),
             textTheme: TextTheme(
                 title: TextStyle(
-                    color: Colors.black,
+                    color: lightBackground,
                     fontSize: 20,
                     fontWeight: FontWeight.bold))),
-        primaryColor: Colors.blue,
+        primarySwatch: darkSwatch,
       ),
       home: MyHomePage(),
       routes: {
@@ -63,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       title: Text("TimeTable"),
     );
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dark,
       appBar: appBar,
       body: _buildPage(mediaQuery, appBar),
     );
@@ -71,14 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void openAddNewTimeTable(BuildContext ctx) {
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(10),
-        topRight: Radius.circular(10),
-      )),
       context: ctx,
+      backgroundColor: Colors.transparent,
       builder: (_) {
         return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            color: lightBackground,
+          ),
           height: 350 + MediaQuery.of(context).viewInsets.bottom,
           child: GestureDetector(
             onTap: () {},
@@ -119,30 +121,41 @@ class _MyHomePageState extends State<MyHomePage> {
             return Align(
                 alignment: Alignment.center, child: new Text('Loading...'));
           default:
-            return snapshot.data != true
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text("Please grant requested permission"),
-                        RaisedButton(
-                          child: Text("Grant permission"),
-                          onPressed: () => requestPermission(),
-                        )
-                      ],
-                    ),
-                  )
-                : FutureBuilder(
-                    future: getTimeTableList(),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Align(
-                              alignment: Alignment.center,
-                              child: new Text('Loading...'));
-                        default:
-                          return Container(
-                            child: Column(
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                color: lightBackground,
+              ),
+              child: snapshot.data != true
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Please grant requested permission"),
+                          RaisedButton(
+                            color: dark,
+                            elevation: 0,
+                            highlightElevation: 3,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Text("Grant permission",
+                                style: TextStyle(
+                                    color: lightBackground, fontSize: 16)),
+                            onPressed: () => requestPermission(),
+                          )
+                        ],
+                      ),
+                    )
+                  : FutureBuilder(
+                      future: getTimeTableList(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Align(
+                                alignment: Alignment.center,
+                                child: new Text('Loading...'));
+                          default:
+                            return Column(
                               children: <Widget>[
                                 snapshot.data.isEmpty
                                     ? NoTimeTable(openAddNewTimeTable)
@@ -152,27 +165,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                             60 -
                                             mediaQuery.viewInsets.bottom -
                                             mediaQuery.padding.top,
-                                        child: GridView.builder(
-                                            padding: EdgeInsets.all(8),
-                                            itemCount: snapshot.data.length,
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 3,
-                                                    crossAxisSpacing: 10,
-                                                    mainAxisSpacing: 10),
-                                            itemBuilder: (context, index) {
-                                              return TimeTableCard(
-                                                  snapshot.data[index]
-                                                      .toString(),
-                                                  snapshot.data[index]);
-                                            }),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(24)),
+                                          child: GridView.builder(
+                                              padding: EdgeInsets.all(8),
+                                              itemCount: snapshot.data.length,
+                                              gridDelegate:
+                                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                                      crossAxisCount: 3,
+                                                      crossAxisSpacing: 10,
+                                                      mainAxisSpacing: 10),
+                                              itemBuilder: (context, index) {
+                                                return TimeTableCard(
+                                                    snapshot.data[index]
+                                                        .toString(),
+                                                    snapshot.data[index]);
+                                              }),
+                                        ),
                                       ),
                                 bottomBarBuilder(),
                               ],
-                            ),
-                          );
-                      }
-                    });
+                            );
+                        }
+                      }),
+            );
         }
       },
     );
@@ -180,38 +197,62 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget bottomBarBuilder() {
     return Container(
+      decoration: BoxDecoration(
+        color: lightBackground,
+      ),
       height: 60,
       child: Column(
         children: <Widget>[
-          Container(
-            height: 1,
-            color: Colors.blue,
-          ),
           SizedBox(
-            height: 5,
+            child: Container(
+              color: dark,
+            ),
+            height: 0.7,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: IconButton(
-                  icon: Icon(
-                    Icons.add,
-                    size: 32,
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: FlatButton(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.add,
+                          size: 32,
+                          color: dark,
+                        ),
+                        Text(
+                          "Time table",
+                          style: TextStyle(fontSize: 12, color: dark),
+                        ),
+                      ],
+                    ),
+                    onPressed: () => openAddNewTimeTable(context),
                   ),
-                  onPressed: () => openAddNewTimeTable(context),
                 ),
-              ),
-              Expanded(
-                child: IconButton(
-                  icon: Icon(
-                    Icons.import_export,
-                    size: 32,
+                Expanded(
+                  child: FlatButton(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.import_export,
+                          size: 32,
+                          color: dark,
+                        ),
+                        Text(
+                          "Import",
+                          style: TextStyle(fontSize: 12, color: dark),
+                        ),
+                      ],
+                    ),
+                    onPressed: () => null,
                   ),
-                  onPressed: () => null,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

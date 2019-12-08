@@ -58,14 +58,17 @@ class _AddNewLectureState extends State<AddNewLecture> {
           timeTable[widget.dayIndex]['lectures'][widget.lectureEditIndex];
       _selectedDay = _dayMenuItems[widget.dayIndex].value;
       _selectedType = temp['type'];
-      _selectedCourse = _coursesMenuItems[0].value;
+
       startTime = DateTime.parse("0000-00-00 " + temp['start_time']);
       endTime = DateTime.parse("0000-00-00 " + temp['end_time']);
       labList = temp['lab'];
       if (temp['type'] == "Lab" || temp['type'] == "Tutorial") {
         isLab = true;
+        _selectedCourse = _coursesMenuItems[0].value;
       } else if (temp['type'] == "Break") {
         isBreak = true;
+      } else {
+        _selectedCourse = findCourse(temp['course_code']);
       }
     } else {
       _selectedDay = _dayMenuItems[0].value;
@@ -77,306 +80,327 @@ class _AddNewLectureState extends State<AddNewLecture> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-          top: 10,
-          left: 10,
-          right: 10,
-          bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Text(
-                            "Day",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          )),
-                      DropdownButton(
-                        items: _dayMenuItems,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            _selectedDay = newValue;
-                          });
-                        },
-                        value: _selectedDay,
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                        margin: EdgeInsets.only(right: 10),
-                        child: Text(
-                          "Type",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        )),
-                    DropdownButton(
-                      items: _typeMenuItems,
-                      onChanged: (String newValue) {
-                        setState(() {
-                          _selectedType = newValue;
-                          if (_selectedType == "Lecture") {
-                            isCourse = true;
-                            isLab = false;
-                            isBreak = false;
-                          } else if (_selectedType == "Break") {
-                            isBreak = true;
-                            isCourse = false;
-                            isLab = false;
-                          } else if (_selectedType == "Lab" ||
-                              _selectedType == "Tutorial") {
-                            isBreak = false;
-                            isCourse = true;
-                            isLab = true;
-                          }
-                        });
-                      },
-                      value: _selectedType,
-                    ),
-                    SizedBox(
-                      width: 32,
-                    )
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          margin: EdgeInsets.only(left: 10),
-                          child: Text(
-                            "Start:",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          )),
-                      FlatButton(
-                        child: Text(
-                          DateFormat.jm().format(startTime),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        onPressed: () => _presentTimePicker("start"),
-                      )
-                    ],
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                        child: Text(
-                      "End:",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    )),
-                    FlatButton(
-                      child: Text(DateFormat.jm().format(endTime),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.blue,
-                          )),
-                      onPressed: () => _presentTimePicker("end"),
-                    ),
-                    SizedBox(
-                      width: 32,
-                    )
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Visibility(
-              visible: !isBreak,
-              child: Row(
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      child: Container(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Column(
+            children: <Widget>[
+              Row(
                 children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                      child: Text(
-                        "Course",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      )),
-                  DropdownButton(
-                    items: _coursesMenuItems,
-                    onChanged: _onChangeSelectedCourse,
-                    value: _selectedCourse,
-                  ),
-                  Visibility(
-                    visible: isLab,
-                    child: Expanded(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(left: 32),
+                  Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
                             child: Text(
-                              "Batch",
+                              "Day",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: dark),
+                            )),
+                        DropdownButton(
+                          items: _dayMenuItems,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              _selectedDay = newValue;
+                            });
+                          },
+                          value: _selectedDay,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: Text(
+                              "Type",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: dark),
+                            )),
+                        DropdownButton(
+                          items: _typeMenuItems,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              _selectedType = newValue;
+                              if (_selectedType == "Lecture") {
+                                isCourse = true;
+                                isLab = false;
+                                isBreak = false;
+                              } else if (_selectedType == "Break") {
+                                isBreak = true;
+                                isCourse = false;
+                                isLab = false;
+                              } else if (_selectedType == "Lab" ||
+                                  _selectedType == "Tutorial") {
+                                isBreak = false;
+                                isCourse = true;
+                                isLab = true;
+                              }
+                            });
+                          },
+                          value: _selectedType,
+                        ),
+                        SizedBox(
+                          width: 32,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            margin: EdgeInsets.only(left: 10),
+                            child: Text(
+                              "Start:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: dark),
+                            )),
+                        FlatButton(
+                          child: Text(
+                            DateFormat.jm().format(startTime),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: colorList[2],
+                            ),
+                          ),
+                          onPressed: () => _presentTimePicker("start"),
+                        )
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            child: Text(
+                          "End:",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: dark),
+                        )),
+                        FlatButton(
+                          child: Text(DateFormat.jm().format(endTime),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: 32,
-                            margin: EdgeInsets.only(left: 16),
-                            width: 50,
-                            child: TextField(
-                              controller: _batchInputController,
-                            ),
-                          ),
-                        ],
-                      ),
+                                color: colorList[2],
+                              )),
+                          onPressed: () => _presentTimePicker("end"),
+                        ),
+                        SizedBox(
+                          width: 32,
+                        )
+                      ],
                     ),
                   ),
-                  Visibility(
-                    visible: isLab,
-                    child: IconButton(
-                      icon: Icon(isLabEdit ? Icons.done : Icons.add),
-                      onPressed: addLab,
-                    ),
-                  )
                 ],
               ),
-            ),
-            Visibility(
-              visible: !isBreak & isLab & (labList.length > 0),
-              child: Container(
-                height: 100,
-                child: GridView.builder(
-                  itemCount: labList.length,
-                  itemBuilder: (ctx, index) {
-                    return Card(
-                      color: Colors.blue,
-                      margin: EdgeInsets.all(4),
+              SizedBox(
+                height: 16,
+              ),
+              Visibility(
+                visible: !isBreak,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
                       child: Row(
                         children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              margin: EdgeInsets.only(left: 8),
+                          Container(
+                              margin: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                labList[index]['course_code'] +
-                                    " - " +
-                                    labList[index]['batch'],
+                                "Course",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: Colors.white),
-                                softWrap: false,
-                                overflow: TextOverflow.fade,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 40,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedCourse =
-                                      findCourse(labList[index]['course_code']);
-                                  _batchInputController.text =
-                                      labList[index]['batch'];
-                                  labEditIndex = index;
-                                  isLabEdit = true;
-                                });
-                              },
-                            ),
-                          ),
-                          Container(
-                            width: 40,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  labList.removeAt(index);
-                                });
-                              },
-                            ),
+                                    fontSize: 18,
+                                    color: dark),
+                              )),
+                          DropdownButton(
+                            items: _coursesMenuItems,
+                            onChanged: _onChangeSelectedCourse,
+                            value: _selectedCourse,
                           ),
                         ],
                       ),
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, childAspectRatio: 4 / 1),
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RaisedButton(
-                    elevation: 0,
-                    highlightElevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    onPressed: addLectureToFile,
-                    child: Text(
-                      widget.isEdit ? "Edit" : "Add",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
-                    color: Colors.blue,
-                  ),
-                  Visibility(
-                    visible: widget.isEdit,
-                    child: Container(
-                      margin: EdgeInsets.only(left: 16),
-                      child: RaisedButton(
-                        elevation: 0,
-                        highlightElevation: 3,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        onPressed: deleteLecture,
-                        child: Text(
-                          "Delete",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                    Expanded(
+                      child: Visibility(
+                        visible: isLab,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              "Batch",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: dark),
+                            ),
+                            Container(
+                              height: 32,
+                              margin: EdgeInsets.only(left: 16),
+                              width: 50,
+                              child: TextField(
+                                cursorColor: dark,
+                                cursorRadius: Radius.circular(4),
+                                style: TextStyle(color: colorList[2]),
+                                decoration: InputDecoration(
+                                    hintText: "Batch",
+                                    hintStyle: TextStyle(color: colorList[2])),
+                                controller: _batchInputController,
+                              ),
+                            ),
+                            Visibility(
+                              visible: isLab,
+                              child: IconButton(
+                                icon: Icon(
+                                  isLabEdit ? Icons.done : Icons.add,
+                                  color: colorList[2],
+                                  size: 28,
+                                ),
+                                onPressed: addLab,
+                              ),
+                            )
+                          ],
                         ),
-                        color: Colors.red,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )
-          ],
+              Visibility(
+                visible: !isBreak & isLab & (labList.length > 0),
+                child: Container(
+                  height: 100,
+                  child: GridView.builder(
+                    itemCount: labList.length,
+                    itemBuilder: (ctx, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: dark,
+                        ),
+                        margin: EdgeInsets.all(4),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                margin: EdgeInsets.only(left: 8),
+                                child: Text(
+                                  labList[index]['course_code'] +
+                                      " - " +
+                                      labList[index]['batch'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: lightBackground),
+                                  softWrap: false,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: 40,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: lightBackground,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedCourse = findCourse(
+                                        labList[index]['course_code']);
+                                    _batchInputController.text =
+                                        labList[index]['batch'];
+                                    labEditIndex = index;
+                                    isLabEdit = true;
+                                  });
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 40,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  color: lightBackground,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    labList.removeAt(index);
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, childAspectRatio: 4 / 1),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      color: dark,
+                      elevation: 0,
+                      highlightElevation: 3,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Text(
+                        widget.isEdit ? "Edit" : "Add",
+                        style: TextStyle(color: lightBackground, fontSize: 16),
+                      ),
+                      onPressed: addLectureToFile,
+                    ),
+                    Visibility(
+                      visible: widget.isEdit,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 16),
+                        child: RaisedButton(
+                          color: dark,
+                          elevation: 0,
+                          highlightElevation: 3,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Text("Delete",
+                              style: TextStyle(
+                                  color: lightBackground, fontSize: 16)),
+                          onPressed: deleteLecture,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -388,7 +412,10 @@ class _AddNewLectureState extends State<AddNewLecture> {
     for (String item in itemList) {
       items.add(DropdownMenuItem(
         value: item,
-        child: Text(item),
+        child: Text(
+          item,
+          style: TextStyle(color: colorList[2]),
+        ),
       ));
     }
     return items;
@@ -434,6 +461,7 @@ class _AddNewLectureState extends State<AddNewLecture> {
             child: Text(
               item['course_code'],
               maxLines: 1,
+              style: TextStyle(color: colorList[2]),
               overflow: TextOverflow.fade,
               softWrap: false,
             )),
@@ -471,7 +499,7 @@ class _AddNewLectureState extends State<AddNewLecture> {
     for (var item in coursesList) {
       if (item['course_code'] == title) return item;
     }
-    return {};
+    return coursesList[0];
   }
 
   void addLectureToFile() {
