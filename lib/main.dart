@@ -164,10 +164,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       crossAxisSpacing: 10,
                                                       mainAxisSpacing: 10),
                                               itemBuilder: (context, index) {
-                                                return TimeTableCard(
-                                                    snapshot.data[index]
-                                                        .toString(),
-                                                    snapshot.data[index]);
+                                                return InkWell(
+                                                  onLongPress: () =>
+                                                      _showDeleteDialog(
+                                                          snapshot.data[index]),
+                                                  child: TimeTableCard(
+                                                      snapshot.data[index]
+                                                          .toString(),
+                                                      snapshot.data[index]),
+                                                );
                                               }),
                                         ),
                                       ),
@@ -322,21 +327,21 @@ class _MyHomePageState extends State<MyHomePage> {
             _writeImportedTimeTable(
                 _importFileName.split(".").first, jsonFileContent);
           } else {
-            showErrorSnackBar(ctx);
+            showErrorSnackBar(ctx, "Couldn't read time table form file");
           }
         });
       });
     } else {
-      showErrorSnackBar(ctx);
+      showErrorSnackBar(ctx, 'Invalid file');
     }
     print(_importFileName);
   }
 
-  void showErrorSnackBar(BuildContext ctx) {
+  void showErrorSnackBar(BuildContext ctx, String msg) {
     final scaffold = Scaffold.of(ctx);
     scaffold.showSnackBar(
       SnackBar(
-        content: const Text('Invalid file'),
+        content: Text(msg),
         action: SnackBarAction(
             label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
       ),
@@ -350,5 +355,44 @@ class _MyHomePageState extends State<MyHomePage> {
     } on FormatException catch (e) {
       return {};
     }
+  }
+
+  _showDeleteDialog(File deletePath) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text("Delete time table?"),
+          content: Text("This will delete selected time table."),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text(
+                "Delete",
+                style: TextStyle(color: colorList[2]),
+              ),
+              onPressed: () => _deleteTimeTable(deletePath),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteTimeTable(File deletePath) {
+    deletePath.deleteSync();
+    setState(() {
+      jsonFileList = getTimeTableList();
+    });
+    Navigator.of(context).pop();
   }
 }

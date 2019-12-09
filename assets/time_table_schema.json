@@ -22,6 +22,8 @@
     },
     "days": {
       "type": "array",
+      "maxItems": 6,
+      "minItems": 6,
       "items": {
         "type": "object",
         "properties": {
