@@ -231,8 +231,8 @@ class _CoursesPageState extends State<CoursesPage> {
               lecValue['type'] == "Tutorial") {
             lecValue['lab'].asMap().forEach((k, lab) {
               if (lab['course_code'] == oldCode) {
-                timeTable[i]['lectures'][j][lab][k] =
-                    _courseCodeInputController.text;
+                var temp = timeTable[i]['lectures'][j]['lab'][k];
+                temp['course_code'] = _courseCodeInputController.text;
               }
             });
           }
