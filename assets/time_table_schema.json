@@ -39,30 +39,16 @@
                   "type": "string"
                 },
                 "start_time": {
-                  "type": "string",
-                  "enum": [
-                    "09:00"
-                  ]
+                  "type": "string"
                 },
                 "end_time": {
-                  "type": "string",
-                  "enum": [
-                    "10:00"
-                  ]
+                  "type": "string"
                 },
                 "course_code": {
-                  "type": "string",
-                  "enum": [
-                    "",
-                    "CP301"
-                  ]
+                  "type": "string"
                 },
                 "course_title": {
-                  "type": "string",
-                  "enum": [
-                    "",
-                    "WT"
-                  ]
+                  "type": "string"
                 },
                 "lab": {
                   "type": "array",
@@ -73,16 +59,9 @@
                         "type": "string"
                       },
                       "course_code": {
-                        "type": "string",
-                        "enum": [
-                          "CP301"
-                        ]
+                        "type": "string"
                       }
-                    },
-                    "required": [
-                      "batch",
-                      "course_code"
-                    ]
+                    }
                   }
                 }
               },

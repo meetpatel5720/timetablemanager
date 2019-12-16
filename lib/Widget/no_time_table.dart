@@ -21,7 +21,7 @@ class NoTimeTable extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Text("Create new",
                 style: TextStyle(color: lightText, fontSize: 16)),
-            onPressed: () => _openAddNewTimeTable(context),
+            onPressed: () => _openAddNewTimeTable(context, false, null),
           )
         ],
       ),

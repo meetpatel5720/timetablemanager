@@ -9,6 +9,7 @@ import 'package:json_schema/json_schema.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timetablemanager/Widget/TimeTableCard.dart';
+import 'package:timetablemanager/Widget/import_timetable.dart';
 import 'package:timetablemanager/Widget/no_time_table.dart';
 import 'package:timetablemanager/constant_data.dart';
 import 'package:timetablemanager/courses_page.dart';
@@ -78,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void openAddNewTimeTable(BuildContext ctx) {
+  void openAddNewTimeTable(BuildContext ctx, bool isImport, var data) {
     showModalBottomSheet(
       context: ctx,
       backgroundColor: Colors.transparent,
@@ -91,7 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
           height: 350 + MediaQuery.of(context).viewInsets.bottom,
           child: GestureDetector(
             onTap: () {},
-            child: NewTimeTable(_addNewTimeTable),
+            child: isImport
+                ? ImportTimeTable(_writeImportedTimeTable, data)
+                : NewTimeTable(_addNewTimeTable),
             behavior: HitTestBehavior.opaque,
           ),
         );
@@ -221,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
-                    onPressed: () => openAddNewTimeTable(context),
+                    onPressed: () => openAddNewTimeTable(context, false, null),
                   ),
                 ),
                 Expanded(
@@ -324,8 +327,9 @@ class _MyHomePageState extends State<MyHomePage> {
           var jsonFileContent = getImportedTimeTable(_importPath);
           var result = schema.validate(jsonFileContent);
           if (result) {
-            _writeImportedTimeTable(
-                _importFileName.split(".").first, jsonFileContent);
+            openAddNewTimeTable(ctx, true, jsonFileContent);
+//            _writeImportedTimeTable(
+//                _importFileName.split(".").first, jsonFileContent);
           } else {
             showErrorSnackBar(ctx, "Couldn't read time table form file");
           }
