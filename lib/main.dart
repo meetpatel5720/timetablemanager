@@ -33,9 +33,7 @@ class MyApp extends StatelessWidget {
             iconTheme: IconThemeData(color: lightBackground),
             textTheme: TextTheme(
                 title: TextStyle(
-                    color: lightBackground,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold))),
+                    color: lightBackground, fontSize: 20, fontWeight: FontWeight.bold))),
         primarySwatch: darkSwatch,
       ),
       home: MyHomePage(),
@@ -108,8 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (_, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return Align(
-                alignment: Alignment.center, child: new Text('Loading...'));
+            return Align(alignment: Alignment.center, child: new Text('Loading...'));
           default:
             return Container(
               decoration: BoxDecoration(
@@ -129,8 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)),
                             child: Text("Grant permission",
-                                style: TextStyle(
-                                    color: lightBackground, fontSize: 16)),
+                                style: TextStyle(color: lightBackground, fontSize: 16)),
                             onPressed: () => requestPermission(),
                           )
                         ],
@@ -168,12 +164,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       mainAxisSpacing: 10),
                                               itemBuilder: (context, index) {
                                                 return InkWell(
-                                                  onLongPress: () =>
-                                                      _showDeleteDialog(
-                                                          snapshot.data[index]),
+                                                  onLongPress: () => _showDeleteDialog(
+                                                      snapshot.data[index]),
                                                   child: TimeTableCard(
-                                                      snapshot.data[index]
-                                                          .toString(),
+                                                      snapshot.data[index].toString(),
                                                       snapshot.data[index]),
                                                 );
                                               }),
@@ -300,12 +294,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool> checkPermission() async {
-    PermissionStatus status = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
+    PermissionStatus status =
+        await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
     if (status == PermissionStatus.granted) {
       baseDir = await getApplicationDocumentsDirectory();
-      baseDir = await Directory(baseDir.path + "/" + "timeTable")
-          .create(recursive: true);
+      baseDir = await Directory(baseDir.path + "/" + "timeTable").create(recursive: true);
       return true;
     } else
       return false;
@@ -313,8 +306,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void openFilePicker(BuildContext ctx) async {
     try {
-      _importPath = await FilePicker.getFilePath(
-          type: FileType.ANY, fileExtension: "json");
+      _importPath =
+          await FilePicker.getFilePath(type: FileType.ANY, fileExtension: "json");
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
     }
@@ -328,8 +321,6 @@ class _MyHomePageState extends State<MyHomePage> {
           var result = schema.validate(jsonFileContent);
           if (result) {
             openAddNewTimeTable(ctx, true, jsonFileContent);
-//            _writeImportedTimeTable(
-//                _importFileName.split(".").first, jsonFileContent);
           } else {
             showErrorSnackBar(ctx, "Couldn't read time table form file");
           }
@@ -346,8 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
     scaffold.showSnackBar(
       SnackBar(
         content: Text(msg),
-        action: SnackBarAction(
-            label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
+        action: SnackBarAction(label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
@@ -367,8 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text("Delete time table?"),
           content: Text("This will delete selected time table."),
           actions: <Widget>[
