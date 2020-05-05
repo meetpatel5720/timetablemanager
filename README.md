@@ -5,6 +5,9 @@ A new Flutter application.
 ## Few screenshots
 
 <img src="https://raw.githubusercontent.com/meetpatel5720/app-screens/master/app-screens/timetablemanager/Screenshot1.jpg?raw=true" width="200px" >
+<img src="https://raw.githubusercontent.com/meetpatel5720/app-screens/master/app-screens/timetablemanager/Screenshot2.jpg?raw=true" width="200px" >
+<img src="https://raw.githubusercontent.com/meetpatel5720/app-screens/master/app-screens/timetablemanager/Screenshot3.jpg?raw=true" width="200px" >
+<img src="https://raw.githubusercontent.com/meetpatel5720/app-screens/master/app-screens/timetablemanager/Screenshot4.jpg?raw=true" width="200px" >
 
 ## Getting Started
 
