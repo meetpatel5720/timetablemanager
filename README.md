@@ -4,7 +4,7 @@ A new Flutter application.
 
 ## Few screenshots
 
-<img src="https://raw.githubusercontent.com/meetpatel5720/app-screens/master/app-screens/timetablemanager/Screenshot1.jpg?raw=true" style="width:200px;">
+<img src="https://raw.githubusercontent.com/meetpatel5720/app-screens/master/app-screens/timetablemanager/Screenshot1.jpg?raw=true" style="width:200px;&quot;">
 
 ## Getting Started
 
